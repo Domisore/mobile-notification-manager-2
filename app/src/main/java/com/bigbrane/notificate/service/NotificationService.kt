@@ -16,7 +16,37 @@ class NotificationService : NotificationListenerService() {
         val notifications: StateFlow<Set<NotificationItem>> = _notifications.asStateFlow()
     }
 
-    override fun onNotificationPosted(sbn: StatusBarNotification) {
+    override fun onCreate() {
+        super.onCreate()
+        loadExistingNotifications()
+    }
+
+    override fun onListenerConnected() {
+        super.onListenerConnected()
+        loadExistingNotifications()
+    }
+
+    override fun onListenerDisconnected() {
+        super.onListenerDisconnected()
+        // Clear notifications when service is disconnected
+        _notifications.update { emptySet() }
+    }
+
+    private fun loadExistingNotifications() {
+        try {
+            val activeNotifications = getActiveNotifications() ?: return
+            val notificationItems = activeNotifications.map { sbn ->
+                createNotificationItem(sbn)
+            }.toSet()
+            
+            _notifications.update { notificationItems }
+        } catch (e: Exception) {
+            // Handle any potential exceptions during loading
+            _notifications.update { emptySet() }
+        }
+    }
+
+    private fun createNotificationItem(sbn: StatusBarNotification): NotificationItem {
         val notification = sbn.notification
         val extras = notification.extras
         
@@ -28,7 +58,7 @@ class NotificationService : NotificationListenerService() {
             sbn.packageName
         }
 
-        val notificationItem = NotificationItem(
+        return NotificationItem(
             id = sbn.id,
             appName = appName,
             title = extras.getString("android.title", ""),
@@ -36,7 +66,10 @@ class NotificationService : NotificationListenerService() {
             postTime = sbn.postTime,
             packageName = sbn.packageName
         )
+    }
 
+    override fun onNotificationPosted(sbn: StatusBarNotification) {
+        val notificationItem = createNotificationItem(sbn)
         _notifications.update { currentNotifications ->
             currentNotifications + notificationItem
         }
