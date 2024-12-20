@@ -1,8 +1,11 @@
 package com.bigbrane.notificate.model
 
+import android.graphics.Bitmap
+
 data class NotificationItem(
     val id: Int,
     val appName: String,
+    val appIcon: Bitmap?, // Change to Bitmap to hold the app icon
     val title: String,
     val text: String,
     val postTime: Long,

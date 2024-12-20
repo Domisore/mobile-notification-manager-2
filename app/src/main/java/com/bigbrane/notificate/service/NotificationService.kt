@@ -1,6 +1,7 @@
 package com.bigbrane.notificate.service
 
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import com.bigbrane.notificate.model.NotificationItem
@@ -57,10 +58,17 @@ class NotificationService : NotificationListenerService() {
         } catch (e: PackageManager.NameNotFoundException) {
             sbn.packageName
         }
+        
+        val appIcon = try {
+            packageManager.getApplicationIcon(sbn.packageName) as Bitmap
+        } catch (e: PackageManager.NameNotFoundException) {
+            null
+        }
 
         return NotificationItem(
             id = sbn.id,
             appName = appName,
+            appIcon = appIcon,
             title = extras.getString("android.title", ""),
             text = extras.getString("android.text", ""),
             postTime = sbn.postTime,
