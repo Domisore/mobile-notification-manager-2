@@ -14,6 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Box
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bigbrane.notificate.service.NotificationService
 import com.bigbrane.notificate.ui.theme.NotificationManagerTheme
@@ -55,39 +57,63 @@ fun NotificationManagerApp() {
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            val groupedNotifications = notifications.groupBy { it.appName }.toSortedMap()
-            
-            groupedNotifications.forEach { (appName, appNotifications) ->
+            if (notifications.isEmpty()) {
                 item {
-                    Text(
-                        text = appName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-                
-                items(appNotifications.toList()) { notification ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .padding(16.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
-                        Column(
+                        Box(
                             modifier = Modifier
-                                .padding(16.dp)
                                 .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = notification.title,
-                                style = MaterialTheme.typography.titleSmall,
+                                text = "No Notifications Found",
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = notification.text,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+                        }
+                    }
+                }
+            } else {
+                val groupedNotifications = notifications.groupBy { it.appName }.toSortedMap()
+                
+                groupedNotifications.forEach { (appName, appNotifications) ->
+                    item {
+                        Text(
+                            text = appName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                    
+                    items(appNotifications.toList()) { notification ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = notification.title,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = notification.text,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
                         }
                     }
                 }
