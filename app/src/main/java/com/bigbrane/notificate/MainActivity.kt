@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bigbrane.notificate.model.NotificationItem
 import com.bigbrane.notificate.service.NotificationService
-import com.bigbrane.notificate.ui.theme.NotificationManagerTheme
+import com.bigbrane.notificate.ui.theme.NotificateTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         checkNotificationPermission()
         enableEdgeToEdge()
         setContent {
-            NotificationManagerTheme {
+            NotificateTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -55,7 +55,7 @@ fun NotificationScreen() {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Notification Manager") }
+                title = { Text("Notificate") }
             )
         }
     ) { padding ->
